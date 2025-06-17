@@ -1,6 +1,7 @@
 import flet as ft
 
 from components import Message, ChatMessage
+from n8n import get_ai_response
 
 def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.DARK
@@ -32,7 +33,7 @@ def main(page: ft.Page):
         page.update()
 
     
-    def send_message_click(e):
+    async def send_message_click(e):
         if new_message.value != "":
             user_message = new_message.value
            
@@ -46,6 +47,16 @@ def main(page: ft.Page):
            
             new_message.value = ""
             page.update()
+
+            ai_response = await get_ai_response(user_message, page)
+
+            add_message_on_history(
+               Message(
+                    user_name='IA',
+                    text=ai_response,
+                    user_type="ia"
+                )
+            )
 
             new_message.focus()
             page.update()
